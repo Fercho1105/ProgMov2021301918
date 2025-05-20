@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            // Estado global de tema
+            
             var isDarkTheme by rememberSaveable { mutableStateOf(false) }
 
             val requestPermissionLauncher = rememberLauncherForActivityResult(
@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
                 )
             }
 
-            // Aplicar tema
+            
             ProductosTheme(darkTheme = isDarkTheme) {
                 UIPrincipal(
                     isDarkTheme = isDarkTheme,
@@ -106,7 +106,7 @@ fun UIPrincipal(
     val dbHelper = remember { DBHelper1(context) }
     var productos by remember { mutableStateOf(obtenerProductosDesdeDB(context)) }
     var mostrarDialogo by rememberSaveable { mutableStateOf(false) }
-    var productoSeleccionadoId by rememberSaveable { mutableStateOf(-2) } // -2 = ninguno, -1 = nuevo
+    var productoSeleccionadoId by rememberSaveable { mutableStateOf(-2) }
 
     val productoSeleccionado = productos.find { it.id == productoSeleccionadoId }
 
@@ -155,7 +155,7 @@ fun UIPrincipal(
                     onToggleTheme = onToggleTheme
                 )
                 IconButton(onClick = {
-                    productoSeleccionadoId = -1 // Nuevo producto
+                    productoSeleccionadoId = -1
                     mostrarDialogo = true
                 }) {
                     Icon(Icons.Default.Add, contentDescription = "Agregar")
@@ -239,12 +239,12 @@ fun PlaceholderCard(
 
                 Text(
                     text = precioFormateado,
-                    color = colors.onSecondaryContainer // o onBackground si lo deseas más neutro
+                    color = colors.onSecondaryContainer
                 )
 
                 Text(
                     text = producto.descripcion ?: "Sin descripción",
-                    color = colors.onSecondaryContainer.copy(alpha = 0.7f) // menor opacidad para diferenciar
+                    color = colors.onSecondaryContainer.copy(alpha = 0.7f) 
                 )
             }
 
@@ -261,10 +261,10 @@ fun PlaceholderCard(
 }
 
 
-// Estilo común para los TextFields
+
 val textFieldModifier = Modifier
     .fillMaxWidth()
-    .heightIn(min = 60.dp)  // Altura mínima aumentada
+    .heightIn(min = 60.dp) 
 
 @Composable
 fun DialogoProducto(
@@ -272,14 +272,14 @@ fun DialogoProducto(
     onGuardar: (Producto) -> Unit,
     onCancelar: () -> Unit
 ) {
-    // Estados del formulario
+    
     var nombre by remember { mutableStateOf(producto?.nombre ?: "") }
     var precio by remember { mutableStateOf(producto?.precio ?: "") }
     var descripcion by remember { mutableStateOf(producto?.descripcion ?: "") }
     var imagenBase64 by remember { mutableStateOf(producto?.imagenBase64) }
     val context = LocalContext.current
 
-    // Launchers para imágenes
+    
     val galeriaLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -295,26 +295,26 @@ fun DialogoProducto(
         bitmap?.let { imagenBase64 = bitmapToBase64(it) }
     }
 
-    // Configuración adaptable
+    
     val configuration = LocalConfiguration.current
     val isLandscape = remember { configuration.orientation == Configuration.ORIENTATION_LANDSCAPE }
 
-    // Dimensiones adaptativas
+    
     val dialogProperties by remember(isLandscape) {
         mutableStateOf(
             if (isLandscape) {
-                // Para horizontal
+                
                 DialogProperties(
-                    width = 0.8f, // 80% del ancho
+                    width = 0.8f,
                     imageSize = 120.dp,
-                    textFieldWidth = 0.5f // Mitad del espacio disponible
+                    textFieldWidth = 0.5f
                 )
             } else {
-                // Para vertical
+                
                 DialogProperties(
-                    width = 0.95f, // 95% del ancho
+                    width = 0.95f,
                     imageSize = 150.dp,
-                    textFieldWidth = 1f // Ancho completo
+                    textFieldWidth = 1f
                 )
             }
         )
@@ -332,13 +332,13 @@ fun DialogoProducto(
                 .fillMaxWidth(dialogProperties.width)
         ) {
             if (isLandscape) {
-                // Diseño horizontal - Dos columnas
+                
                 Row(
                     modifier = Modifier
                         .padding(24.dp)
                         .fillMaxWidth()
                 ) {
-                    // Columna izquierda - Formulario
+                    
                     Column(
                         modifier = Modifier
                             .weight(1f)
@@ -383,7 +383,7 @@ fun DialogoProducto(
                             value = descripcion,
                             onValueChange = { descripcion = it },
                             label = { Text("Descripción") },
-                            modifier = textFieldModifier.height(120.dp), // Altura fija mayor
+                            modifier = textFieldModifier.height(120.dp),
                             textStyle = LocalTextStyle.current.copy(fontSize = 16.sp),
                             maxLines = 5
                         )
@@ -409,7 +409,7 @@ fun DialogoProducto(
                         }
                     }
 
-                    // Columna derecha - Imagen y botones
+                    
                     Column(
                         modifier = Modifier
                             .weight(1f)
@@ -485,7 +485,7 @@ fun DialogoProducto(
                     }
                 }
             } else {
-                // Diseño vertical - Una columna
+                
                 Column(
                     modifier = Modifier
                         .padding(24.dp)
@@ -626,14 +626,14 @@ fun DialogoProducto(
     }
 }
 
-// Clase de datos para propiedades del diálogo
+
 private data class DialogProperties(
     val width: Float,
     val imageSize: Dp,
     val textFieldWidth: Float
 )
 
-// Función de validación del formulario
+
 private fun validarFormulario(context: Context, nombre: String, precio: String, descripcion: String): Boolean {
     return when {
         nombre.isBlank() -> {
@@ -705,7 +705,7 @@ fun SettingsButton(
     var showInfoDialog by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
 
-    // Ícono de tuerca para abrir el diálogo principal
+    
     IconButton(onClick = { showSettingsDialog = true }) {
         Icon(Icons.Default.Settings, contentDescription = "Configuración")
     }
@@ -719,9 +719,9 @@ fun SettingsButton(
 
             title = { Text("Configuración") },
             text = {
-                // Un solo composable que agrupe todo
+               
                 Row(horizontalArrangement = Arrangement.spacedBy(45.dp)) {
-                    // Botón Tema + sub-menú
+                    
                     Box {
                         IconButton(onClick = { showPaletteMenu = true }) {
                             Icon(Icons.Default.Palette, contentDescription = "Cambiar tema")
@@ -748,11 +748,11 @@ fun SettingsButton(
                         }
                     }
 
-                    // Botón Info
+                    
                     IconButton(onClick = { showInfoDialog = true }) {
                         Icon(Icons.Default.Info, contentDescription = "Información del Equipo")
                     }
-                    // Sub-diálogo Info
+                    
                     if (showInfoDialog) {
                         AlertDialog(
                             onDismissRequest   = { showInfoDialog = false },
@@ -772,11 +772,11 @@ fun SettingsButton(
                         )
                     }
 
-                    // Botón Ayuda
+                   
                     IconButton(onClick = { showHelpDialog = true }) {
                         Icon(Icons.Default.Help, contentDescription = "Ayuda")
                     }
-                    // Sub-diálogo Ayuda
+                    
                     if (showHelpDialog) {
                         AlertDialog(
                             onDismissRequest   = { showInfoDialog = false },
